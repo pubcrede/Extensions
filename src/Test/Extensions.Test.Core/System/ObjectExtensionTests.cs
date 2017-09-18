@@ -34,14 +34,25 @@ namespace Genesys.Extensions.Test
         }
 
         /// <summary>
-        /// Extensions_Object_DirectCastSafe
+        /// Extensions_Object_CastSafe
         /// </summary>
         [TestMethod()]
-        public void Object_DirectCastSafe()
+        public void Object_CastSafe()
         {
             var testItem = new MyClass1();
             var compareItem = new MyClass3();
-            Assert.IsTrue(testItem.DirectCastSafe<MyClass3>().GetType() == compareItem.GetType());
+            Assert.IsTrue(testItem.CastSafe<MyClass3>().GetType() == compareItem.GetType());
+        }
+
+        /// <summary>
+        /// Extensions_Object_CastSafe
+        /// </summary>
+        [TestMethod()]
+        public void Object_CastOrFill()
+        {
+            var testItem = new MyClass1();
+            var compareItem = new MyClass3();
+            Assert.IsTrue(testItem.CastOrFill<MyClass3>().GetType() == compareItem.GetType());
         }
 
         /// <summary>

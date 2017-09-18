@@ -122,7 +122,7 @@ namespace Genesys.Extras.Configuration
         /// <returns>App setting that matches the key</returns>
         public AppSettingSafe AppSetting(string key)
         {
-            AppSettingSafe ReturnData = AppSettings.Find(x => x.Key == key).DirectCastSafe<AppSettingSafe>();
+            AppSettingSafe ReturnData = AppSettings.Find(x => x.Key == key).CastSafe<AppSettingSafe>();
 
             if (ThrowException && ReturnData.Value == TypeExtension.DefaultString)
             {
@@ -149,7 +149,7 @@ namespace Genesys.Extras.Configuration
         /// <returns>Value contents</returns>
         public ConnectionStringSafe ConnectionString(string key)
         {
-            ConnectionStringSafe ReturnData = ConnectionStrings.Find(x => x.Key == key).DirectCastSafe<ConnectionStringSafe>();
+            ConnectionStringSafe ReturnData = ConnectionStrings.Find(x => x.Key == key).CastSafe<ConnectionStringSafe>();
 
             if (ThrowException && ReturnData.Value == TypeExtension.DefaultString)
             {

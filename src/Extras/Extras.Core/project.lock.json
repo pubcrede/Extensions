@@ -1,12 +1,46 @@
 {
-  "locked": false,
-  "version": 1,
+  "version": 2,
   "targets": {
-    ".NETPortable,Version=v4.6,Profile=Profile151": {}
+    ".NETPortable,Version=v4.6,Profile=Profile151": {
+      "Genesys.Extensions.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETPortable,Version=v4.6,Profile=Profile151"
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Genesys.Extensions.Core/1.0.0": {
+      "type": "project",
+      "path": "../../Extensions/Extensions.Core/project.json",
+      "msbuildProject": "../../Extensions/Extensions.Core/Genesys.Extensions.Core.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
     "": [],
     ".NETPortable,Version=v4.6,Profile=Profile151": []
+  },
+  "packageFolders": {
+    "C:\\Users\\rjgood\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "restore": {
+      "projectUniqueName": "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extras\\Extras.Core\\Genesys.Extras.Core.csproj",
+      "projectName": "Genesys.Extras.Core",
+      "projectPath": "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extras\\Extras.Core\\Genesys.Extras.Core.csproj",
+      "projectJsonPath": "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extras\\Extras.Core\\project.json",
+      "projectStyle": "ProjectJson",
+      "frameworks": {
+        "portable46-net451+win81+wpa81": {
+          "projectReferences": {
+            "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extensions\\Extensions.Core\\Genesys.Extensions.Core.csproj": {
+              "projectPath": "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extensions\\Extensions.Core\\Genesys.Extensions.Core.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "portable46-net451+win81+wpa81": {}
+    }
   }
 }

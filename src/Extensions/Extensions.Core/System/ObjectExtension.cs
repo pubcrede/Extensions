@@ -125,12 +125,12 @@ namespace Genesys.Extensions
 
         /// <summary>
         /// Safe type casting via (TDestination)item method.
-        /// If cast fails, will attempt the slower Fill() of data via reflection
+        /// If cast fails, will return constructed object
         /// </summary>
         /// <typeparam name="TDestination">Type to default, or create new()</typeparam>
         /// <param name="item">Item to cast</param>
         /// <returns>Cast result via (TDestination)item, or item.Fill(), or new TDestination().</returns>
-        public static TDestination DirectCastSafe<TDestination>(this object item) where TDestination : new()
+        public static TDestination CastSafe<TDestination>(this object item) where TDestination : new()
         {
             var returnValue = new TDestination();
 
@@ -138,9 +138,9 @@ namespace Genesys.Extensions
             {
                 returnValue = item != null ? (TDestination)item : returnValue;
             }
-            catch(InvalidCastException)
+            catch (InvalidCastException)
             {
-                returnValue.Fill(item);
+                returnValue = new TDestination();
             }
 
             return returnValue;
@@ -153,20 +153,17 @@ namespace Genesys.Extensions
         /// <typeparam name="TDestination">Type to default, or create new()</typeparam>
         /// <param name="item">Item to cast</param>
         /// <returns>Defaulted type, or created new()</returns>
-        public static TDestination DirectCastOrFill<TDestination>(this object item) where TDestination : new()
+        public static TDestination CastOrFill<TDestination>(this object item) where TDestination : new()
         {
             var returnValue = new TDestination();
 
             try
             {
-                if (item != null)
-                {
-                    returnValue = (TDestination)item;
-                }
+                returnValue = item != null ? (TDestination)item : returnValue;
             }
-            catch
+            catch (InvalidCastException)
             {
-                returnValue = new TDestination();
+                returnValue.Fill(item);
             }
 
             return returnValue;

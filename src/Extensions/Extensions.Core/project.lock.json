@@ -13,10 +13,10 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "C:\\Repos\\Framework\\3.00-Alpha\\Extensions\\Extensions\\Extensions.Core\\Genesys.Extensions.Core.csproj",
+      "projectUniqueName": "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extensions\\Extensions.Core\\Genesys.Extensions.Core.csproj",
       "projectName": "Genesys.Extensions.Core",
-      "projectPath": "C:\\Repos\\Framework\\3.00-Alpha\\Extensions\\Extensions\\Extensions.Core\\Genesys.Extensions.Core.csproj",
-      "projectJsonPath": "C:\\Repos\\Framework\\3.00-Alpha\\Extensions\\Extensions\\Extensions.Core\\project.json",
+      "projectPath": "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extensions\\Extensions.Core\\Genesys.Extensions.Core.csproj",
+      "projectJsonPath": "C:\\Repos\\Framework\\GitHub\\Extensions\\src\\Extensions\\Extensions.Core\\project.json",
       "projectStyle": "ProjectJson"
     },
     "frameworks": {

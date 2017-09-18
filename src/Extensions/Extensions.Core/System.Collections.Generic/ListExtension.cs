@@ -74,7 +74,7 @@ namespace Genesys.Extensions
         /// <returns>Found item or constructed equivalent.</returns>
         public static T Item<T>(this List<T> item, int index) where T : new()
         {
-            return item[index].DirectCastSafe<T>();
+            return item[index].CastSafe<T>();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Genesys.Extensions
         /// <returns>Found item in list based on predicate</returns>
         public static T FindSafe<T>(this List<T> item, Predicate<T> query) where T : new()
         {
-            return item.Find(query).DirectCastSafe<T>();
+            return item.Find(query).CastSafe<T>();
         }
         
         /// <summary>

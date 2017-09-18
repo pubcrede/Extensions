@@ -27,6 +27,296 @@ namespace Genesys.Extensions
     [CLSCompliant(true)]
     public static class  StringExtension
     {
+
+        /// <summary>
+        /// Adds string/char if string begins with that string/char
+        /// </summary>
+        /// <param name="item">Item to Add part</param>
+        /// <param name="toAdd">string to Add if match</param>
+        /// <returns>Original item without the Addd substring</returns>
+        public static string AddFirst(this string item, string toAdd)
+        {
+            var returnValue = item.Trim();
+
+            if (item.IsFirst(toAdd) == false)
+            {
+                returnValue = (toAdd + item);
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Adds string/char if string ends with that string/char
+        /// </summary>
+        /// <param name="item">Item to Add part</param>
+        /// <param name="toAdd">string to Add if match</param>
+        /// <returns>Original item without the Addd substring</returns>
+        public static string AddLast(this string item, string toAdd)
+        {
+            var returnValue = item.Trim();
+
+            if (item.IsLast(toAdd) == false)
+            {
+                returnValue = (item + toAdd);
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Applies pascal casing to a string
+        /// </summary>
+        /// <param name="uncasedString">string to case</param>
+        /// <param name="parseCharacter">Character that decides when to start a new capital letter</param>
+        /// <param name="useExistingCase">Protects all upper characters, or previously cased characters from getting re-cased.</param>
+        /// <returns>Cased string</returns>
+        private static string FormatCasePascal(string uncasedString, string parseCharacter, bool useExistingCase = true)
+        {
+            var returnValue = TypeExtension.DefaultString;
+            string[] words = null;
+            var word = TypeExtension.DefaultString;
+            char firstLetter = TypeExtension.DefaultChar;
+            var count = TypeExtension.DefaultInteger;
+
+            words = uncasedString.Split(parseCharacter.ToCharArray());
+            for (count = 0; count <= words.Length - 1; count++)
+            {
+                // Upper-case abbreviations (P.O., B.S.A.)
+                if ((words[count].Replace(".", string.Empty).Length == (words[count].Length / 2)))
+                {
+                    word = words[count].ToUpperInvariant();
+                } else
+                {
+                    if (useExistingCase == false)
+                    {
+                        word = words[count].ToLowerInvariant();
+                    } else
+                    {
+                        word = words[count];
+                    }
+                }
+                if (word.Length > 0)
+                {
+                    firstLetter = char.ToUpperInvariant(word[0]);
+                    returnValue = returnValue + firstLetter + word.Substring(1) + parseCharacter;
+                }
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Formats exceptions for Pascal Case 
+        ///  (i.e. Mr. Smith II should not be pascal cased to Ii)
+        /// </summary>
+        /// <param name="uncasedString">string to search for exceptions to special-case</param>
+        /// <param name="parseCharacter">Character that decides when to start a new capital letter</param>
+        /// <returns>Cased item based on the exception casing rules</returns>
+        private static string FormatCaseException(string uncasedString, string parseCharacter)
+        {
+            var returnValue = TypeExtension.DefaultString;
+            string[] words = null;
+            var word = TypeExtension.DefaultString;
+            var firstLetter = TypeExtension.DefaultChar;
+            var count = TypeExtension.DefaultInteger;
+
+            words = uncasedString.Split(parseCharacter.ToCharArray());
+            for (count = 0; count <= words.Length - 1; count++)
+            {
+                word = words[count];
+                if (word.Length > 0)
+                {
+                    switch (word.ToLowerInvariant())
+                    {
+                        case "jr.":
+                            word = "Jr.";
+                            break;
+                        case "ii":
+                            word = "II";
+                            break;
+                        case "iii":
+                            word = "III";
+                            break;
+                        case "iv":
+                            word = "IV";
+                            break;
+                    }
+                    returnValue = returnValue + word + parseCharacter;
+                }
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Is this item all upper case?
+        /// </summary>
+        /// <param name="item">Item to validate</param>
+        /// <returns>True if this is all upper case.</returns>
+        public static bool IsCaseUpper(this string item)
+        {
+            var returnValue = TypeExtension.DefaultBoolean;
+
+            if (item == item.ToUpperInvariant())
+            {
+                returnValue = true;
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Is this item all lower case?
+        /// </summary>
+        /// <param name="item">Item to validate</param>
+        /// <returns>True if this is all lower case.</returns>
+        public static bool IsCaseLower(this string item)
+        {
+            var returnValue = TypeExtension.DefaultBoolean;
+
+            if (item == item.ToLowerInvariant())
+            {
+                returnValue = true;
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Is this item mixed case?
+        /// </summary>
+        /// <param name="item">Item to validate</param>
+        /// <returns>True if this has mixed case.</returns>
+        public static bool IsCaseMixed(this string item)
+        {
+            return !item.IsCaseLower() & !item.IsCaseUpper();
+        }
+
+        /// <summary>
+        /// Is this item an email address?
+        /// </summary>
+        /// <param name="item">Item to validate</param>
+        /// <param name="emptyStringOK">Flags an empty string as valid, even though it is not an email address</param>
+        /// <returns>True if this is an email address (or if empty.)</returns>
+        public static bool IsEmail(this string item, bool emptyStringOK = true)
+        {
+            var returnValue = TypeExtension.DefaultBoolean;
+
+            item = item.Trim();
+            if ((emptyStringOK == true & item.Length == 0))
+            {
+                returnValue = true;
+            } else
+            {
+                if ((item.Contains("@") & item.Contains("."))
+                    && (item.IndexOf(".", item.IndexOf("@")) > item.IndexOf("@"))
+                    && (item.Contains(" ") == false)
+                    && (item.SubstringSafe(item.IndexOf("@") + 1).Contains("@") == false))
+                {
+                    returnValue = true;
+                }
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Is the first character(s) equal to the passed characters?
+        /// </summary>
+        /// <param name="item">Item to validate</param>
+        /// <param name="firstCharacters">Character to look for</param>
+        /// <returns>True/False if found characters in position</returns>
+        public static bool IsFirst(this string item, string firstCharacters)
+        {
+            var returnValue = TypeExtension.DefaultBoolean;
+
+            if (item.Length >= firstCharacters.Length)
+            {
+                if (item.SubstringSafe(0, firstCharacters.Length) == firstCharacters)
+                {
+                    returnValue = true;
+                }
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Is this item an integer?
+        /// </summary>
+        /// <param name="item">Item to validate</param>
+        /// <returns>True if this is an integer.</returns>
+        public static bool IsInteger(this string item)
+        {
+            var result = TypeExtension.DefaultInteger;
+            var returnValue = TypeExtension.DefaultBoolean;
+
+            if (item.TryParseInt64() != TypeExtension.DefaultInteger)
+            {
+                returnValue = true;
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Is the last character(s) equal to the passed characters?
+        /// </summary>
+        /// <param name="item">Item to validate</param>
+        /// <param name="lastCharacters">Character to look for</param>
+        /// <returns>True/False if found characters in position</returns>
+        public static bool IsLast(this string item, string lastCharacters)
+        {
+            var returnValue = TypeExtension.DefaultBoolean;
+
+            if (item.Length >= lastCharacters.Length)
+            {
+                if (item.SubstringRight(lastCharacters.Length) == lastCharacters)
+                {
+                    returnValue = true;
+                }
+            }
+
+            return returnValue;
+        }        
+
+        /// <summary>
+        /// Removes string/char if string begins with that string/char
+        /// </summary>
+        /// <param name="item">Item to remove part</param>
+        /// <param name="toRemove">string to remove if match</param>
+        /// <returns>Original item without the removed substring</returns>
+        public static string RemoveFirst(this string item, string toRemove)
+        {
+            var returnValue = item.Trim();
+
+            if (item.IsFirst(toRemove) == true)
+            {
+                returnValue = item.SubstringRight(item.Length - toRemove.Length);
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Removes string/char if string ends with that string/char
+        /// </summary>
+        /// <param name="item">Item to remove part</param>
+        /// <param name="toRemove">string to remove if match</param>
+        /// <returns>Original item without the removed substring</returns>
+        public static string RemoveLast(this string item, string toRemove)
+        {
+            var returnValue = item.Trim();
+
+            if (item.IsLast(toRemove) == true)
+            {
+                returnValue = item.SubstringLeft(item.Length - toRemove.Length);
+            }
+
+            return returnValue;
+        }
+
         /// <summary>
         /// Converts a string to Boolean
         /// </summary>
@@ -384,298 +674,6 @@ namespace Genesys.Extensions
             }
 
             return returnValue.Trim();
-        }
-
-        /// <summary>
-        /// Applies pascal casing to a string
-        /// </summary>
-        /// <param name="uncasedString">string to case</param>
-        /// <param name="parseCharacter">Character that decides when to start a new capital letter</param>
-        /// <param name="useExistingCase">Protects all upper characters, or previously cased characters from getting re-cased.</param>
-        /// <returns>Cased string</returns>
-        private static string FormatCasePascal(string uncasedString, string parseCharacter, bool useExistingCase = true)
-        {
-            var returnValue = TypeExtension.DefaultString;
-            string[] words = null;
-            var word = TypeExtension.DefaultString;
-            char firstLetter = TypeExtension.DefaultChar;
-            var count = TypeExtension.DefaultInteger;
-
-            words = uncasedString.Split(parseCharacter.ToCharArray());
-            for (count = 0; count <= words.Length - 1; count++)
-            {
-                // Upper-case abbreviations (P.O., B.S.A.)
-                if ((words[count].Replace(".", string.Empty).Length == (words[count].Length / 2)))
-                {
-                    word = words[count].ToUpperInvariant();
-                }
-                else
-                {
-                    if (useExistingCase == false)
-                    {
-                        word = words[count].ToLowerInvariant();
-                    }
-                    else
-                    {
-                        word = words[count];
-                    }
-                }
-                if (word.Length > 0)
-                {
-                    firstLetter = char.ToUpperInvariant(word[0]);
-                    returnValue = returnValue + firstLetter + word.Substring(1) + parseCharacter;
-                }
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Formats exceptions for Pascal Case 
-        ///  (i.e. Mr. Smith II should not be pascal cased to Ii)
-        /// </summary>
-        /// <param name="uncasedString">string to search for exceptions to special-case</param>
-        /// <param name="parseCharacter">Character that decides when to start a new capital letter</param>
-        /// <returns>Cased item based on the exception casing rules</returns>
-        private static string FormatCaseException(string uncasedString, string parseCharacter)
-        {
-            var returnValue = TypeExtension.DefaultString;
-            string[] words = null;
-            var word = TypeExtension.DefaultString;
-            var firstLetter = TypeExtension.DefaultChar;
-            var count = TypeExtension.DefaultInteger;
-
-            words = uncasedString.Split(parseCharacter.ToCharArray());
-            for (count = 0; count <= words.Length - 1; count++)
-            {
-                word = words[count];
-                if (word.Length > 0)
-                {
-                    switch (word.ToLowerInvariant())
-                    {
-                        case "jr.":
-                            word = "Jr.";
-                            break;
-                        case "ii":
-                            word = "II";
-                            break;
-                        case "iii":
-                            word = "III";
-                            break;
-                        case "iv":
-                            word = "IV";
-                            break;
-                    }
-                    returnValue = returnValue + word + parseCharacter;
-                }
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Adds string/char if string begins with that string/char
-        /// </summary>
-        /// <param name="item">Item to Add part</param>
-        /// <param name="toAdd">string to Add if match</param>
-        /// <returns>Original item without the Addd substring</returns>
-        public static string AddFirst(this string item, string toAdd)
-        {
-            var returnValue = item.Trim();
-
-            if (item.IsFirst(toAdd) == false)
-            {
-                returnValue = (toAdd + item);
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Adds string/char if string ends with that string/char
-        /// </summary>
-        /// <param name="item">Item to Add part</param>
-        /// <param name="toAdd">string to Add if match</param>
-        /// <returns>Original item without the Addd substring</returns>
-        public static string AddLast(this string item, string toAdd)
-        {
-            var returnValue = item.Trim();
-
-            if (item.IsLast(toAdd) == false)
-            {
-                returnValue = (item + toAdd);
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Removes string/char if string begins with that string/char
-        /// </summary>
-        /// <param name="item">Item to remove part</param>
-        /// <param name="toRemove">string to remove if match</param>
-        /// <returns>Original item without the removed substring</returns>
-        public static string RemoveFirst(this string item, string toRemove)
-        {
-            var returnValue = item.Trim();
-
-            if (item.IsFirst(toRemove) == true)
-            {
-                returnValue = item.SubstringRight(item.Length - toRemove.Length );
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Removes string/char if string ends with that string/char
-        /// </summary>
-        /// <param name="item">Item to remove part</param>
-        /// <param name="toRemove">string to remove if match</param>
-        /// <returns>Original item without the removed substring</returns>
-        public static string RemoveLast(this string item, string toRemove)
-        {
-            var returnValue = item.Trim();
-
-            if (item.IsLast(toRemove) == true)
-            {
-                returnValue = item.SubstringLeft(item.Length - toRemove.Length);
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Is the first character(s) equal to the passed characters?
-        /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <param name="firstCharacters">Character to look for</param>
-        /// <returns>True/False if found characters in position</returns>
-        public static bool IsFirst(this string item, string firstCharacters)
-        {
-            var returnValue = TypeExtension.DefaultBoolean;
-
-            if (item.Length >= firstCharacters.Length)
-            {
-                if (item.SubstringSafe(0, firstCharacters.Length) == firstCharacters)
-                {
-                    returnValue = true;
-                }
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Is the last character(s) equal to the passed characters?
-        /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <param name="lastCharacters">Character to look for</param>
-        /// <returns>True/False if found characters in position</returns>
-        public static bool IsLast(this string item, string lastCharacters)
-        {
-            var returnValue = TypeExtension.DefaultBoolean;
-
-            if (item.Length >= lastCharacters.Length)
-            {
-                if (item.SubstringRight(lastCharacters.Length) == lastCharacters)
-                {
-                    returnValue = true;
-                }
-            }
-
-            return returnValue;
-        }
-        
-        /// <summary>
-        /// Is this item an email address?
-        /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <param name="emptyStringOK">Flags an empty string as valid, even though it is not an email address</param>
-        /// <returns>True if this is an email address (or if empty.)</returns>
-        public static bool IsEmail(this string item, bool emptyStringOK = true)
-        {
-            var returnValue = TypeExtension.DefaultBoolean;
-
-            item = item.Trim();
-            if ((emptyStringOK == true & item.Length == 0))
-            {
-                returnValue = true;
-            }
-            else
-            {
-                if ((item.Contains("@") & item.Contains("."))
-                    && (item.IndexOf(".", item.IndexOf("@")) > item.IndexOf("@"))
-                    && (item.Contains(" ") == false)
-                    && (item.SubstringSafe(item.IndexOf("@") + 1).Contains("@") == false))
-                {
-                    returnValue = true;
-                }
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Is this item an integer?
-        /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <returns>True if this is an integer.</returns>
-        public static bool IsInteger(this string item)
-        {
-            var result = TypeExtension.DefaultInteger;
-            var returnValue = TypeExtension.DefaultBoolean;
-
-            if (item.TryParseInt64() != TypeExtension.DefaultInteger)
-            {
-                returnValue = true;
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Is this item all upper case?
-        /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <returns>True if this is all upper case.</returns>
-        public static bool IsCaseUpper(this string item)
-        {
-            var returnValue = TypeExtension.DefaultBoolean;
-
-            if (item == item.ToUpperInvariant())
-            {
-                returnValue = true;
-            }
- 
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Is this item all lower case?
-        /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <returns>True if this is all lower case.</returns>
-        public static bool IsCaseLower(this string item)
-        {
-            var returnValue = TypeExtension.DefaultBoolean;
-
-            if (item == item.ToLowerInvariant())
-            {
-                returnValue = true;
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Is this item mixed case?
-        /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <returns>True if this has mixed case.</returns>
-        public static bool IsCaseMixed(this string item)
-        {
-            return !item.IsCaseLower() & !item.IsCaseUpper();
         }
     }
 }

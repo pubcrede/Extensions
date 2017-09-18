@@ -87,7 +87,7 @@ namespace Genesys.Extras.Collections
             get
             {
                 KeyValuePairSafe<TKey, TValue> returnValue
-                    = base.Find(x => x.Key.ToStringSafe() == key.ToStringSafe()).DirectCastSafe<KeyValuePairSafe<TKey, TValue>>();
+                    = base.Find(x => x.Key.ToStringSafe() == key.ToStringSafe()).CastSafe<KeyValuePairSafe<TKey, TValue>>();
                 return returnValue;
             }
             set
